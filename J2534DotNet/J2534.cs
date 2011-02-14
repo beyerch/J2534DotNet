@@ -75,7 +75,6 @@ namespace J2534DotNet
 
         public J2534Err ReadMsgs(int channelId, ref List<PassThruMsg> msgs, ref int numMsgs, int timeout)
         {
-            // TODO: change function to accept a list? of PassThruMsg
             IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*50);
             IntPtr pNextMsg = IntPtr.Zero;
             IntPtr[] pMsgs = new IntPtr[50];
@@ -91,6 +90,8 @@ namespace J2534DotNet
                 }
             }
 
+            Marshal.FreeHGlobal(pMsg);
+
             return returnValue;
         }
 
@@ -101,10 +102,10 @@ namespace J2534DotNet
             return (J2534Err)m_wrapper.WriteMsgs(channelId, ref uMsg, ref numMsgs, timeout);
         }
 
-        public J2534Err StartPeriodicMsg(int channelId, PassThruMsg msg, ref int msgId, int timeInterval)
+        public J2534Err StartPeriodicMsg(int channelId, ref PassThruMsg msg, ref int msgId, int timeInterval)
         {
             UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
-            return (J2534Err)m_wrapper.StartPeriodicMsg(channelId, uMsg, ref msgId, timeInterval);
+            return (J2534Err)m_wrapper.StartPeriodicMsg(channelId, ref uMsg, ref msgId, timeInterval);
         }
 
         public J2534Err StopPeriodicMsg(int channelId, int msgId)
@@ -181,6 +182,11 @@ namespace J2534DotNet
                 dllVersion = Marshal.PtrToStringAnsi(pDllVersion);
                 apiVersion = Marshal.PtrToStringAnsi(pApiVersion);
             }
+
+            Marshal.FreeHGlobal(pFirmwareVersion);
+            Marshal.FreeHGlobal(pDllVersion);
+            Marshal.FreeHGlobal(pApiVersion);
+
             return returnValue;
         }
 
@@ -192,6 +198,9 @@ namespace J2534DotNet
             {
                 errorDescription = Marshal.PtrToStringAnsi(pErrorDescription);
             }
+
+            Marshal.FreeHGlobal(pErrorDescription);
+
             return returnValue;
         }
 
@@ -221,6 +230,9 @@ namespace J2534DotNet
             {
                 voltage = Marshal.ReadInt32(output);
             }
+
+            Marshal.FreeHGlobal(output);
+
             return returnValue;
         }
 
