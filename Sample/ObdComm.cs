@@ -276,7 +276,6 @@ namespace Sample
                 return false;
             }
 
-	        // Read Response(s). Last in wins.
             numMsgs = 1;
             while (J2534Err.STATUS_NOERROR == m_status)
 	        {
@@ -286,7 +285,7 @@ namespace Sample
             if (J2534Err.ERR_BUFFER_EMPTY == m_status || J2534Err.ERR_TIMEOUT == m_status)
             {
                 if (rxMsgs.Count > 1)
-                {  //[txMsg.Data.Length -1]
+                {
                     // Select the last value
                     value = rxMsgs[rxMsgs.Count - 1].Data.ToList();
                     value.RemoveRange(0, txMsg.Data.Length);
